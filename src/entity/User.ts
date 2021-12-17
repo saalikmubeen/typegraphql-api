@@ -17,7 +17,9 @@ class User extends BaseEntity {
     lastName!: string;
 
     @Field()
-    name!: string;
+    name(): string {
+        return `${this.firstName} ${this.lastName}`;
+    }
 
     @Column({ type: "text", unique: true })
     @Field()
