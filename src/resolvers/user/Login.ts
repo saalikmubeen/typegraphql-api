@@ -23,6 +23,10 @@ class LoginResolver {
             throw new Error("Incorrect email or password");
         }
 
+        if (!user.confirmed) {
+            throw new Error("Please confirm your email first");
+        }
+
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
             expiresIn: "30 days",
         });

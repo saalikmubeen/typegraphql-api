@@ -27,6 +27,9 @@ class User extends BaseEntity {
 
     @Column({ type: "text" })
     password!: string;
+
+    @Column({ type: "boolean", default: false })
+    confirmed!: boolean;
 }
 
 export { User };
