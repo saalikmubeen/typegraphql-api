@@ -1,8 +1,10 @@
 "use strict";
 import nodemailer from "nodemailer";
-import { html } from "./emailTemplate";
+import { EmailTypes } from "../types/EmailType";
+import { confirmEmailTemplate } from "./confirmEmailTemplate";
+import { forgotPasswordTemplate } from "./forgotPasswordTemplate";
 
-async function sendMail(email: string, url: string) {
+async function sendMail(email: string, url: string, type: EmailTypes) {
     // Generate test SMTP service account from ethereal.email
     // Only needed if you don't have a real mail account for testing
     let testAccount = await nodemailer.createTestAccount();
@@ -22,9 +24,15 @@ async function sendMail(email: string, url: string) {
     let info = await transporter.sendMail({
         from: '"Fred Foo 👻" <foo@example.com>', // sender address
         to: email, // list of receivers
-        subject: "Hello ✔", // Subject line
-        text: "Hello world?", // plain text body
-        html: html(url), // html body
+        subject:
+            type === EmailTypes.CONFIRM_EMAIL
+                ? "Confirm Email"
+                : "Reset Password", // Subject line
+        text: url, // plain text body
+        html:
+            type === EmailTypes.CONFIRM_EMAIL
+                ? confirmEmailTemplate(url)
+                : forgotPasswordTemplate(url), // html body
     });
 
     console.log("Message sent: %s", info.messageId);

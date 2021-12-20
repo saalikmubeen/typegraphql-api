@@ -8,6 +8,7 @@ import { MyContext } from "src/types/MyContext";
 import { redis } from "../../redis";
 import { confirmUserPrefix } from "../../constants/redisPrefixes";
 import { sendMail } from "../../utils/email";
+import { EmailTypes } from "../../types/EmailType";
 
 @Resolver(User)
 class RegisterResolver {
@@ -45,7 +46,7 @@ class RegisterResolver {
             newUser.id
         }/${confirmToken}`;
 
-        await sendMail(newUser.email, url);
+        await sendMail(newUser.email, url, EmailTypes.CONFIRM_EMAIL);
 
         return newUser;
     }

@@ -13,6 +13,8 @@ import { MyContext } from "./types/MyContext";
 import { MeResolver } from "./resolvers/user/Me";
 import { redis } from "./redis";
 import { confirmUserPrefix } from "./constants/redisPrefixes";
+import { ForgotPasswordResolver } from "./resolvers/user/ForgoPassword";
+import { ResetPasswordResolver } from "./resolvers/user/ResetPassword";
 
 dotenv.config();
 
@@ -20,7 +22,13 @@ const start = async () => {
     await createConnection();
 
     const schema = await buildSchema({
-        resolvers: [RegisterResolver, LoginResolver, MeResolver],
+        resolvers: [
+            RegisterResolver,
+            LoginResolver,
+            MeResolver,
+            ForgotPasswordResolver,
+            ResetPasswordResolver,
+        ],
     });
 
     const apolloServer = new ApolloServer({
