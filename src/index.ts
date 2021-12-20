@@ -66,8 +66,8 @@ const start = async () => {
 
     apolloServer.applyMiddleware({ app });
 
-    app.get("/", (_, res) => {
-        res.send("Hello World!");
+    app.get("/confirm/:id/:token", (req, res) => {
+        res.send({ userId: req.params.id, token: req.params.token });
     });
 
     app.listen(4000, () => {

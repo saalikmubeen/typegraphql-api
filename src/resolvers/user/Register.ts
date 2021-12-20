@@ -1,8 +1,13 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import bcrypt from "bcryptjs";
+import { randomBytes } from "crypto";
+import { promisify } from "util";
 import { User } from "../../entity/User";
 import { RegisterInput } from "./lib/RegisterInput";
-import { sendMail } from "src/utils/email";
+import { MyContext } from "src/types/MyContext";
+import { redis } from "../../redis";
+import { confirmUserPrefix } from "../../constants/redisPrefixes";
+import { sendMail } from "../../utils/email";
 
 @Resolver(User)
 class RegisterResolver {
@@ -12,7 +17,10 @@ class RegisterResolver {
     }
 
     @Mutation(() => User)
-    async register(@Arg("input") input: RegisterInput): Promise<User> {
+    async register(
+        @Arg("input") input: RegisterInput,
+        @Ctx() ctx: MyContext
+    ): Promise<User> {
         const { email, firstName, lastName, password } = input;
         const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -22,6 +30,22 @@ class RegisterResolver {
             lastName,
             password: hashedPassword,
         }).save();
+
+        const promisedRandomBytes = promisify(randomBytes);
+        const confirmToken = (await promisedRandomBytes(20)).toString("hex");
+
+        redis.set(
+            confirmUserPrefix + confirmToken,
+            newUser.id,
+            "ex",
+            1 * 24 * 60 * 60
+        ); // 1 day expiration
+
+        const url = `${ctx.req.protocol}://${ctx.req.get("host")}/confirm/${
+            newUser.id
+        }/${confirmToken}`;
+
+        await sendMail(newUser.email, url);
 
         return newUser;
     }

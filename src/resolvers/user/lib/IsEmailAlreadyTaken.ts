@@ -9,7 +9,7 @@ import { User } from "../../../entity/User";
 class IsEmailAlreadyTaken implements ValidatorConstraintInterface {
     async validate(email: string, _: ValidationArguments): Promise<boolean> {
         const user = await User.findOne({ where: { email } });
-        return !!user;
+        return !user;
     }
 
     defaultMessage(_: ValidationArguments) {
