@@ -34,7 +34,7 @@ class RegisterResolver {
         const promisedRandomBytes = promisify(randomBytes);
         const confirmToken = (await promisedRandomBytes(20)).toString("hex");
 
-        redis.set(
+        await redis.set(
             confirmUserPrefix + confirmToken,
             newUser.id,
             "ex",

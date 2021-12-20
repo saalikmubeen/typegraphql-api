@@ -11,6 +11,8 @@ import { LoginResolver } from "./resolvers/user/Login";
 import { User } from "./entity/User";
 import { MyContext } from "./types/MyContext";
 import { MeResolver } from "./resolvers/user/Me";
+import { redis } from "./redis";
+import { confirmUserPrefix } from "./constants/redisPrefixes";
 
 dotenv.config();
 
@@ -66,8 +68,21 @@ const start = async () => {
 
     apolloServer.applyMiddleware({ app });
 
-    app.get("/confirm/:id/:token", (req, res) => {
-        res.send({ userId: req.params.id, token: req.params.token });
+    app.get("/confirm/:id/:token", async (req, res) => {
+        const { id, token } = req.params;
+
+        const userId = await redis.get(confirmUserPrefix + token);
+
+        if (!userId || userId !== id) {
+            res.send("Invalid request");
+            return;
+        }
+
+        await User.update({ id: Number(userId) }, { confirmed: true });
+
+        await redis.del(confirmUserPrefix + token);
+
+        res.send("Your email has been confirmed. Please log in.");
     });
 
     app.listen(4000, () => {
