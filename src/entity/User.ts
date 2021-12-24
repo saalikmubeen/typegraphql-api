@@ -39,7 +39,7 @@ class User extends BaseEntity {
     confirmed!: boolean;
 
     @OneToMany(() => Tweet, (tweet) => tweet.user)
-    @Field(() => [Tweet], { nullable: true })
+    @Field(() => [Tweet])
     tweets?: Tweet[];
 }
 

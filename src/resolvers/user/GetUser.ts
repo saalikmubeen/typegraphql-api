@@ -5,8 +5,11 @@ import { User } from "../../entity/User";
 class GetUserResolver {
     // ...
     @Query(() => User)
-    async getUser(@Arg("userId") userId: string): Promise<User | undefined> {
-        const user = await User.findOne({ where: { id: userId } });
+    async getUser(@Arg("userId") userId: number): Promise<User | undefined> {
+        const user = await User.findOne(
+            { id: userId },
+            { relations: ["tweets"] }
+        );
 
         return user;
     }

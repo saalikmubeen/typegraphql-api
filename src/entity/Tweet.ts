@@ -24,7 +24,10 @@ export class Tweet extends BaseEntity {
     @Field()
     published!: boolean;
 
-    @ManyToOne(() => User, (user) => user.tweets, { onDelete: "CASCADE" })
+    @ManyToOne(() => User, (user) => user.tweets, {
+        onDelete: "CASCADE",
+        eager: true,
+    })
     @JoinTable()
     @Field(() => User)
     user!: User;

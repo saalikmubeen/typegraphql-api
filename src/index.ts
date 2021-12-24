@@ -6,6 +6,7 @@ import express from "express";
 import { createConnection } from "typeorm";
 import cors from "cors";
 import jwt from "jsonwebtoken";
+
 import { RegisterResolver } from "./resolvers/user/Register";
 import { LoginResolver } from "./resolvers/user/Login";
 import { User } from "./entity/User";
