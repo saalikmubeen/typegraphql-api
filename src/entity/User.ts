@@ -1,5 +1,12 @@
 import { Field, ID, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    OneToMany,
+    PrimaryGeneratedColumn,
+} from "typeorm";
+import { Tweet } from "./Tweet";
 
 @Entity({ name: "users" })
 @ObjectType()
@@ -30,6 +37,9 @@ class User extends BaseEntity {
 
     @Column({ type: "boolean", default: false })
     confirmed!: boolean;
+
+    @OneToMany(() => Tweet, (tweet) => tweet.user)
+    tweets?: Tweet[];
 }
 
 export { User };
