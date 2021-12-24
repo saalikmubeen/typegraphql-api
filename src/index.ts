@@ -15,6 +15,9 @@ import { redis } from "./redis";
 import { confirmUserPrefix } from "./constants/redisPrefixes";
 import { ForgotPasswordResolver } from "./resolvers/user/ForgoPassword";
 import { ResetPasswordResolver } from "./resolvers/user/ResetPassword";
+import { GetUserResolver } from "./resolvers/user/GetUser";
+import { customAuthChecker } from "./isAuth";
+import { TweetResolver } from "./resolvers/tweet/Tweet";
 
 dotenv.config();
 
@@ -28,7 +31,11 @@ const start = async () => {
             MeResolver,
             ForgotPasswordResolver,
             ResetPasswordResolver,
+
+            GetUserResolver,
+            TweetResolver,
         ],
+        authChecker: customAuthChecker,
     });
 
     const apolloServer = new ApolloServer({
